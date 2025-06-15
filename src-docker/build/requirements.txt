@@ -1,0 +1,13 @@
+notebook
+jupyterlab
+ipykernel
+findspark
+pyspark==4.0.0
+delta-spark==4.0.0
+pandas>=2.0.0
+pyarrow>=11.0.0
+grpcio >= 1.48.1
+grpcio-status >= 1.48.1
+
+############################### adicione packages personalizados aqui abaixo 
+sas7bdat

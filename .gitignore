@@ -1,0 +1,72 @@
+# Ignorar arquivos binários grandes usados para build
+build/downloads/*.tar.gz
+build/downloads/*.whl
+
+/notebooks/*
+!/notebooks/**/*.ipynb
+
+# Ignorar diretórios de dados de Hadoop
+src-docker/build/hadoop/*
+
+# Ignorar JARs dentro da pasta spark/jars (e subpastas)
+src-docker/build/spark/jars/**/*.jar
+
+# Ignorar dump de Redis (base de dados em memória)
+src-docker/build/redis/*
+
+# pgsql 
+src-docker/build/postgres/*
+!src-docker/build/postgres/**/*.sql
+!src-docker/build/postgres/*.sql
+
+
+# downloads copyrights
+src-docker/build/downloads/*
+!src-docker/build/downloads/*.md
+!src-docker/build/downloads/.gitkeep
+
+# Ignorar caches e arquivos temporários do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.pytest_cache/
+*.mypy_cache/
+*.pyre/
+*.python_history
+.python-version
+.ipynb_checkpoints
+
+# configs duplicadas por algum motivo 
+# Ignorar arquivos XML em src-docker/build/trino/etc
+src-docker/build/trino/etc/*.xml
+
+# Ignorar logs do sistema e logs Spark (se gerar local)
+logs/
+*.log
+
+# Ignorar arquivos de configuração sensíveis e arquivos de ambiente
+# *.env --airflow env irrelevante
+*.secret
+
+# Ignorar arquivos temporários do editor (exemplo: VSCode, Vim)
+.vscode/
+*.swp
+*~
+
+# Ignorar arquivos e pastas Docker que são temporários
+docker-compose.override.yml
+
+# Ignorar diretórios do Jupyter notebook
+.ipynb_checkpoints
+
+# Ignorar arquivos e pastas temporários do sistema
+.DS_Store
+Thumbs.db
+
+#bkp
+bkp/
+
+## qualquer outro db
+*.db

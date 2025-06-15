@@ -1,0 +1,5 @@
+build/hadoop/namenode/data
+build/hadoop/datanode/data
+build/logs/
+**/*.log
+**/__pycache__/

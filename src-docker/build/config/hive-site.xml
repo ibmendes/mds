@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<configuration>
+    <!-- JDBC connection string for PostgreSQL -->
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://postgres:5432/metastore</value>
+        <description>PostgreSQL connection URL for Hive metastore</description>
+    </property>
+
+    <!-- JDBC driver for PostgreSQL -->
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+        <description>PostgreSQL JDBC driver class</description>
+    </property>
+    <property>
+    <name>hive.server2.enable.doAs</name>
+    <value>false</value>
+    </property>
+    <!-- PostgreSQL username -->
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>hiveuser</value>
+        <description>PostgreSQL username for Hive metastore</description>
+    </property>
+
+    <!-- PostgreSQL password -->
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>hivepassword</value>
+        <description>PostgreSQL password for Hive metastore</description>
+    </property>
+
+    <!-- Hive metastore dialect -->
+    <property>
+        <name>datanucleus.autoCreateSchema</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.metastore.schema.verification</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.metastore.schema.verification.record.version</name>
+        <value>true</value>
+    </property>
+
+    <!-- Metastore warehouse location -->
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/user/hive/warehouse</value>
+        <description>Location of default database for the warehouse</description>
+    </property>
+
+    <!-- Hive metastore config de conexão publica, para acesso local e outras ferramentas -->
+    <property>
+    <name>hive.server2.transport.mode</name>
+    <value>binary</value>
+    </property>
+
+    <property>
+    <name>hive.server2.authentication</name>
+    <value>NONE</value>
+    </property>
+
+    <property>
+    <name>hive.server2.thrift.bind.host</name>
+    <value>0.0.0.0</value>
+    </property>
+
+    <property>
+    <name>hive.server2.thrift.port</name>
+    <value>10000</value>
+    </property>
+
+    <property>
+    <name>hive.server2.thrift.java.port</name>
+    <value>10000</value>
+    </property>
+
+    <!-- Add JVM options for Java 11 compatibility -->
+    <property>
+    <name>hive.server2.thrift.jvm.args</name>
+    <value>
+        --add-opens=java.base/java.net=ALL-UNNAMED
+        --add-opens=java.base/java.lang=ALL-UNNAMED
+    </value>
+    </property>
+    
+</configuration>

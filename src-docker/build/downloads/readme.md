@@ -1,0 +1,1 @@
+### os tarball desta pasta servem para configuração do ambiente! qualquer falta aqui resultará em erros no hiveserver, spark e hdfs.
