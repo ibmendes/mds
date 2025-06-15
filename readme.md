@@ -32,7 +32,7 @@ Principais serviços do ambiente:
 
 1. inicie o projeto 
 
-    git clone https://github.com/ibmendes/mds-spark4
+    git clone https://github.com/ibmendes/mds
 
 > na primeira execução, executar no terminal 'docker compose build' em seguida, podemos subir o projeto pelo bash
 
