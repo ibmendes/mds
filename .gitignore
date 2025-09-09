@@ -14,6 +14,8 @@ src-docker/build/spark/jars/**/*.jar
 # Ignorar dump de Redis (base de dados em memória)
 src-docker/build/redis/*
 
+*projetos/
+
 # pgsql 
 src-docker/build/postgres/*
 !src-docker/build/postgres/**/*.sql
