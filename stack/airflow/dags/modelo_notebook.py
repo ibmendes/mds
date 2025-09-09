@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import os
 
 # Caminho para o seu notebook Jupyter na pasta utils
-NOTEBOOK_PATH = os.path.join(os.path.dirname(__file__), 'utils', 'notebooks', 'paxpe.ipynb')
-OUTPUT_PATH = os.path.join(os.path.dirname(__file__), 'utils', 'notebooks', 'logs', 'paxpe_log.ipynb')
+NOTEBOOK_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'notebooks', 'paxpe.ipynb')
+OUTPUT_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'notebooks', 'logs', 'paxpe_log.ipynb')
 
 default_args = {
     'owner': 'airflow',
