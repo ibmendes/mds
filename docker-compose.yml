@@ -422,12 +422,13 @@ services:
       dockerfile: src-docker/spark.Dockerfile
     container_name: jupyter-spark
     ports:
-      - "4040:4040"   # Spark UI
+      - "4040:4040"   # Spark UI (session)
       - "7077:7077"   # Serve as Master
+      - "7078:7078"   # Master service port
       # - "18080:18080" # History server
       - "8888:8888"   # Jupyter
       # - "5555:5555"   # Debug
-      # - "8082:8082"   # Custom port, se necessário
+      - "8082:8082"   # Spark Worker UI
     volumes:
       # - ./src-docker/build:/opt/build:ro
       - ./notebooks:/home/sparkuser/app

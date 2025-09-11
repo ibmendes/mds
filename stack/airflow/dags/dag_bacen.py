@@ -9,7 +9,7 @@ import sys
 
 
 py_utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "utils", "py"))
-requirements_path = os.path.join(py_utils_path, "bacen", "requirements.txt")
+requirements_path = os.path.join(py_utils_path, "bacen", "requirements_pip.txt")
 
 # Instala automaticamente os pacotes se o arquivo existir
 if os.path.exists(requirements_path):
@@ -25,15 +25,15 @@ with DAG(
 
     run_bacen = SparkSubmitOperator(
         task_id="run_bacen_spark",
-        application=os.path.join(py_utils_path, "bacen", "__init__.py"),
+        application=os.path.join(py_utils_path, "bacen", "main.py"),
         name="bacen_spark_job",
         conn_id="spark_default",
-        verbose=True,
+        verbose=False,
         application_args=[],
-        conf={
-            "spark.driver.memory": "2g",
-            "spark.executor.memory": "2g",
-        },
+        # conf={
+        #     "spark.driver.memory": "2g",
+        #     "spark.executor.memory": "2g",
+        # },
         jars="/opt/airflow/jars/postgresql-42.6.0.jar",
     )
 

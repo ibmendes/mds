@@ -39,6 +39,8 @@ Principais serviços do ambiente:
     ```bash
     chmod +x start.sh
     ./start.sh
+    ou 
+    sh start.sh
     ```
 
 2. lidando com o docker
@@ -47,7 +49,7 @@ Principais serviços do ambiente:
 
         CTRL+C no terminal bash aberto / docker compose down
 
-    para apagar os dados do projeto utilize (**obs: essa ação apaga todos os dados! inclusive de outras builds. sugiro apagar pelo docker desktop individualmente caso tenha outros projetos**):
+    para apagar os dados do projeto utilize
 
         docker compose down -v
 
@@ -62,7 +64,7 @@ Principais serviços do ambiente:
 
 | Serviço                | Porta                | Descrição                                   | Link de Acesso                                      |
 |------------------------|----------------------|---------------------------------------------|-----------------------------------------------------|
-| PostgreSQL             | `5432`               | Backend Airflow, Metabase, Hive Metastore   | N/A (acesso via cliente SQL, ex: DBeaver)           |
+| PostgreSQL             | `5432`               | Backend Airflow, Hive Metastore etc         | N/A (acesso via cliente SQL, ex: DBeaver)           |
 | HiveServer2            | `10000`              | JDBC/Beeline                                | beeline -u jdbc:hive2://localhost:10000 ou beeline  |
 | Metastore              | `9863` / `10002`     | API Thrift para Metastore                   | N/A (acesso via Spark/Hive)                         |
 | NameNode               | `9870`               | Interface Web do HDFS NameNode              | [http://localhost:9870](http://localhost:9870)      |
@@ -71,7 +73,7 @@ Principais serviços do ambiente:
 | Airflow 3.0 api-server | `8080`               | Interface Web do Airflow                    | [http://localhost:8080](http://localhost:8080)      |
 | Flower                 | `5555` / `5558`      | Dependência do Airflow, Celery Worker       | n/a                                                 |
 | Redis                  | `6379`               | Dependência do Airflow, backend             | N/A                                                 |
-| Spark UI               | `4040`               | Interface Web do Spark (ativa na sessão)    | [http://localhost:4040](http://localhost:4040)      |
+| Spark UI               |`7078`/`4040`(session)| Interface Web do Spark (ativa na sessão)    | [http://localhost:7078](http://localhost:7078)      |
 | trino                  | `9090`               | ui presto/trino para o superset/modelagem   | [http://localhost:9090](http://localhost:9090)      |
 | mongo-express          | `9092`               |  nosql                                      | [http://localhost:9092](http://localhost:9092)      |
 | nifi                   | `8443`               |                                             | [https://localhost:8443/nifi](https://localhost:8443/nifi)|
@@ -136,9 +138,6 @@ psql -h localhost -U hiveuser -d metastore
     │   │   └── utils
     │   │       ├── notebooks <---- para servir como utils de dags com papermill
     │   │       └── py  <---- para servir como utils de dags nativas em py
-    │   │   └── utils
-    │   │       ├── notebooks <--- dev
-    │   │       └── py <--- dev
     │   ├── notebooks	<--- espaço para testes, servindo como uma outra alternativa da /notebooks da raiz do projeto. 
     │   │   ├── saslab.ipynb
     │   │   └── teste_ambiente.ipynb
