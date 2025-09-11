@@ -1,23 +1,20 @@
-# connection/postgres.py
-
 import os
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-
 class PostgresConnection:
-    def __init__(self):
-        # valores principais (pode vir do docker-compose/env)
-        self.host = os.getenv("POSTGRES_HOST", "postgres")  # tenta primeiro 'postgres' (docker)
-        self.port = int(os.getenv("POSTGRES_PORT", 5432))
-        self.user = os.getenv("POSTGRES_USER", "hiveuser")
-        self.password = os.getenv("POSTGRES_PASSWORD", "hivepassword")
+    def __init__(self, host=None, port=None, user=None, password=None):
+        """
+        Inicializa a conexão com o PostgreSQL.
+        Valores padrão vêm do Docker/env, mas podem ser sobrescritos.
+        """
+        self.host = host or os.getenv("POSTGRES_HOST", "postgres")
+        self.port = port or int(os.getenv("POSTGRES_PORT", 5432))
+        self.user = user or os.getenv("POSTGRES_USER", "hiveuser")
+        self.password = password or os.getenv("POSTGRES_PASSWORD", "hivepassword")
 
     def connect(self, database="postgres"):
-        """
-        Conecta ao PostgreSQL.
-        Se não conseguir no host definido, tenta localhost.
-        """
+        """Conecta ao PostgreSQL; tenta localhost se falhar no host principal."""
         try:
             return psycopg2.connect(
                 host=self.host,
@@ -29,18 +26,18 @@ class PostgresConnection:
         except Exception as e:
             print(f"[WARN] Falha ao conectar em {self.host}:{self.port} → {e}")
             print("[INFO] Tentando conectar via localhost...")
-
+            self.host = "localhost"  # atualiza o host
             return psycopg2.connect(
-                host="localhost",
+                host=self.host,
                 port=self.port,
                 user=self.user,
                 password=self.password,
                 database=database
             )
-
+        
     def create_database_if_not_exists(self, dbname="sgs_bacen"):
-        """Cria o banco se não existir e define owner"""
-        conn = self.connect("postgres")  # conecta ao banco padrão
+        """Cria o banco se não existir e define owner."""
+        conn = self.connect("postgres")
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
 
@@ -55,36 +52,17 @@ class PostgresConnection:
 
         cur.close()
         conn.close()
-        
-    def jdbc_url(self, database="sgs_bacen"):
-            # Tenta usar o host definido (docker), se não, usa localhost
-            host = self.host
-            try:
-                import socket
-                socket.gethostbyname(host)  # testa resolução
-            except Exception:
-                host = "localhost"
-            return f"jdbc:postgresql://{host}:{self.port}/{database}"
-    
+
     def create_table(self, create_table_query, table_name=None, database="sgs_bacen", owner=None):
         """
-        Cria uma tabela a partir de uma query passada como argumento.
-        
-        Parâmetros:
-        - create_table_query: string com a query SQL de criação (CREATE TABLE IF NOT EXISTS ...)
-        - table_name: nome da tabela (opcional, usado apenas para alterar owner)
-        - database: nome do banco
-        - owner: usuário dono da tabela (opcional, default = self.user)
+        Cria uma tabela a partir de uma query SQL.
+        Define owner se table_name for passado.
         """
         owner = owner or self.user
-
         conn = self.connect(database)
         cur = conn.cursor()
 
-        # Executa a query de criação
         cur.execute(create_table_query)
-
-        # Define o owner se o nome da tabela foi passado
         if table_name:
             cur.execute(f'ALTER TABLE {table_name} OWNER TO "{owner}";')
 
@@ -92,3 +70,7 @@ class PostgresConnection:
         cur.close()
         conn.close()
         print(f"[OK] Tabela {table_name or 'desconhecida'} criada ou já existe no banco {database}, owner={owner}")
+
+    def jdbc_url(self, database="sgs_bacen", schema="public"):
+        """Retorna URL JDBC compatível com Spark."""
+        return f"jdbc:postgresql://{self.host}:{self.port}/{database}?currentSchema={schema}"

@@ -11,6 +11,7 @@ ENV SPARK_HOME=/opt/spark
 ENV PATH=$SPARK_HOME/bin:$PATH
 ENV PYSPARK_PYTHON=/usr/bin/python3
 ENV PYSPARK_DRIVER_PYTHON=jupyter
+ENV SPARK_WORKER_WEBUI_PORT=8082
 
 ###############################
 # 3) Dependências do sistema
@@ -116,7 +117,9 @@ RUN mkdir -p ${SPARK_HOME}/logs ${SPARK_HOME}/event_logs && \
 ###############################
 RUN echo "spark.eventLog.enabled true"                             >> $SPARK_HOME/conf/spark-defaults.conf && \
     echo "spark.eventLog.dir file://${SPARK_HOME}/event_logs"       >> $SPARK_HOME/conf/spark-defaults.conf && \
-    echo "spark.history.fs.logDirectory file://${SPARK_HOME}/event_logs" >> $SPARK_HOME/conf/spark-defaults.conf
+    echo "spark.history.fs.logDirectory file://${SPARK_HOME}/event_logs" >> $SPARK_HOME/conf/spark-defaults.conf && \
+    echo "spark.master.host 0.0.0.0" >> $SPARK_HOME/conf/spark-defaults.conf && \
+    echo "spark.master.ui.port 7078" >> $SPARK_HOME/conf/spark-defaults.conf
 
 ###############################
 # 12) Ambiente de notebooks
@@ -132,7 +135,7 @@ ENV PYSPARK_DRIVER_PYTHON_OPTS="lab \
     --NotebookApp.token='' \
     --NotebookApp.password='' \
     --NotebookApp.disable_check_xsrf=True"
-EXPOSE 4040 4041 18080 8888 5555 7077
+EXPOSE 4040 4041 18080 8888 5555 7077 7078 8082
 
 ###############################
 # 13) CMD com Jupyter + Spark Master + Worker

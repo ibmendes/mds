@@ -1,2 +1,2 @@
-from connect import *
-from indicadores_economicos import *
+from utils.connect import *
+from utils.sgs import *
