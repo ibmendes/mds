@@ -34,7 +34,18 @@ CREATE TABLE IF NOT EXISTS raw.cdi (
 );
 """
 
-# cria a tabela se não existir
-pg.create_table(ipca, table_name="ipca")
-pg.create_table(cdi, table_name="cdi")
+igpm = """
+CREATE TABLE IF NOT EXISTS raw.igpm (
+    cod_sgs BIGINT NOT NULL,
+    nm_indice VARCHAR(50) NOT NULL,
+    data DATE NOT NULL,
+    valor DOUBLE PRECISION,
+    dt_ingestao TIMESTAMP,
+    PRIMARY KEY (cod_sgs, data)
+);
+"""
 
+# cria a tabela se não existir
+pg.create_table(ipca, schema="raw", table_name="ipca")
+pg.create_table(cdi, schema="raw", table_name="cdi")
+pg.create_table(igpm, schema="raw", table_name="igpm")

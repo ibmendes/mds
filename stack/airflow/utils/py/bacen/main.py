@@ -32,7 +32,7 @@ class Main:
 
         self.spark = SparkSession.builder \
             .appName(app_name) \
-            .master("spark://jupyter-spark:7077") \
+            .master("local[*]") \
             .config(conf=SparkConf()
                     .set("spark.sql.shuffle.partitions", "4")
                     .set("spark.driver.memory", "2g")
@@ -45,6 +45,8 @@ class Main:
         self.BacenMainLogger.info("Sessão Spark inicializada ✅")
         # Conector Postgres
         self.connector = PostgresConnection(host=host, port=port)
+        self.BacenMainLogger.info("Conexão postgres inicializada ✅")
+        self.BacenMainLogger.info(f"({host} {port})")
         self.database = database
 
     def jdbc_url(self, schema=None):
@@ -71,22 +73,23 @@ class Main:
         Executa o pipeline de ETL.
         cada script em sua def final gera um df, que aqui é escrito no Postgres.
         """
-        self.BacenMainLogger.info("Iniciando ipca.py")
-        df_ipca = get_final_ipca(self.spark, self.connector, schema="raw")
-
-        if df_ipca.count() > 0:
-            self.write_df(df_ipca, table_name="ipca", schema="raw",mode="append")
-        else:
-            self.BacenMainLogger.warning("DataFrame IPCA vazio, nada foi escrito.")
-
-        self.BacenMainLogger.info("Iniciando CDI.py")
-        df_cdi = get_final_cdi(self.spark, self.connector, schema="raw")
-
-        if df_cdi.count() > 0:
-            self.write_df(df_cdi, table_name="cdi", schema="raw",mode="append")
-        else:
-            self.BacenMainLogger.warning("DataFrame CDI vazio, nada foi escrito.")
-            
+        
+        ## ingere as bases ### 
+        #ipca
+        self.BacenMainLogger.info("iniciando ipca")
+        df = get_sgs_index(self.spark,self.connector,433,'ipca',"raw")
+        if df.count() > 1:
+            self.write_df(df, "ipca", "raw", "append")
+        #cdi
+        self.BacenMainLogger.info("iniciando cdi")
+        df = get_sgs_index(self.spark,self.connector,12,'cdi',"raw")
+        if df.count() > 1:
+            self.write_df(df, "cdi", "raw", "append")
+        #igpm
+        self.BacenMainLogger.info("iniciando igpm")
+        df = get_sgs_index(self.spark,self.connector,189,'igpm',"raw")
+        if df.count() > 1:
+            self.write_df(df, "igpm", "raw", "append")
 
         self.BacenMainLogger.info("Pipeline ETL finalizado ✅")
 
