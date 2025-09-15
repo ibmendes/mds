@@ -60,11 +60,11 @@ def get_sgs_index (
         if last_ref is not None:
             # d+1 para append
             print (f"[INFO] Ultima ingestão para o {code}({nome_indice}): {last_ref}")
-            start_ref = (last_ref + timedelta(days=1)).strftime("%Y-%m-%d")
+            start_ref = last_ref
         else:
             # y-10
             start_ref = (date.today() - timedelta(days=364*10)).strftime("%Y-%m-%d")
-        end_ref = date.today().strftime("%Y-%m-%d")
+        end_ref = (date.today()- timedelta(days=1)).strftime("%Y-%m-%d")
     else:
         # start customizado
         start_ref = start
@@ -99,6 +99,7 @@ def get_sgs_index (
     df = df[["cod_sgs", "nm_indice", "data", "valor", "dt_ingestao"]]
 
     df_spark = spark.createDataFrame(df)
-    df_spark = df_spark.filter(df_spark["data"] > last_ref)
+    df_spark = df_spark.filter(df_spark["data"] > start_ref)
     df_spark = df_spark.orderBy(df_spark["data"].desc())
+    df_spark = df_spark.dropDuplicates(["cod_sgs", "data"])
     return df_spark

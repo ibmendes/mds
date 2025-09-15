@@ -63,35 +63,45 @@ class PostgresConnection:
 
         table_created = False
 
-        if table_name:
-            # verifica se a tabela já existe no schema especificado
-            cur.execute("""
-                SELECT EXISTS (
-                    SELECT 1
-                    FROM information_schema.tables
-                    WHERE table_schema = %s
-                    AND table_name = %s
-                );
-            """, (schema, table_name))
-            exists = cur.fetchone()[0]
-        else:
-            exists = False
+        try:
+            if table_name:
+                # verifica se a tabela já existe no schema especificado
+                cur.execute("""
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM information_schema.tables
+                        WHERE table_schema = %s
+                        AND table_name = %s
+                    );
+                """, (schema, table_name))
+                exists = cur.fetchone()[0]
+            else:
+                exists = False
 
-        if not exists:
-            cur.execute(create_table_query)
-            
-        if table_name:
-            full_table_name = f"{schema}.{table_name}"
-            cur.execute(f'ALTER TABLE {full_table_name} OWNER TO "{owner}";')
-            conn.commit()
-            table_created = True
+            if not exists:
+                cur.execute(create_table_query)
+                table_created = True  # flag
+                print(f"[INFO] Tabela {table_name} criada com sucesso")
+            else:
+                print(f"[INFO] Tabela {table_name} já existe, pulando criação")
 
-        cur.close()
-        conn.close()
+            # onwer apenas quando criar
+            if table_created and table_name:
+                full_table_name = f"{schema}.{table_name}"
+                cur.execute(f'ALTER TABLE {full_table_name} OWNER TO "{owner}";')
+                conn.commit()
+                print(f"[OK] Tabela {table_name} criada no banco {database}, owner={owner}")
 
-        if table_created and table_name:
-            print(f"[OK] Tabela {table_name} criada no banco {database}, owner={owner}")
-            
+        except Exception as e:
+            conn.rollback()
+            print(f"[ERRO] Falha ao criar tabela: {str(e)}")
+            raise
+
+        finally:
+            cur.close()
+            conn.close()
+
+
     def jdbc_url(self, database="sgs_bacen", schema="public"):
         """Retorna URL JDBC compatível com Spark."""
         return f"jdbc:postgresql://{self.host}:{self.port}/{database}?currentSchema={schema}"
