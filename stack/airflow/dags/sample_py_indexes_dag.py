@@ -6,10 +6,10 @@ import os
 import subprocess
 import sys
 
-
+### ibm: sample dag project for study cases
 
 py_utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "utils", "py"))
-requirements_path = os.path.join(py_utils_path, "bacen", "requirements_pip.txt")
+requirements_path = os.path.join(py_utils_path, "macro_indexes", "requirements_pip.txt")
 
 # Instala automaticamente os pacotes se o arquivo existir
 if os.path.exists(requirements_path):
@@ -17,15 +17,15 @@ if os.path.exists(requirements_path):
 
 
 with DAG(
-    dag_id="bacen_dag",
+    dag_id="indexes_dag",
     start_date=datetime(2025, 1, 1),
     schedule=None,
     catchup=False,
 ) as dag:
 
     run_bacen = SparkSubmitOperator(
-        task_id="run_bacen_spark",
-        application=os.path.join(py_utils_path, "bacen", "main.py"),
+        task_id="run_indexes_on_spark",
+        application=os.path.join(py_utils_path, "macro_indexes", "main.py"),
         name="bacen_spark_job",
         conn_id="spark_default",
         verbose=False,
